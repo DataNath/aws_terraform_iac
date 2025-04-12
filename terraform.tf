@@ -12,9 +12,10 @@ provider "aws" {
 
   default_tags {
     tags = {
-      IAC     = "Yes"
-      Owner   = "Nathan Purvis"
-      Company = "The Information Lab"
+      IAC         = "Yes"
+      Owner       = "Nathan Purvis"
+      Department  = "Engineering"
+      Environment = "Sandbox"
     }
   }
 }
