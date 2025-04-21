@@ -1,36 +1,38 @@
-# Create an 'Admin' IAM group
-resource "aws_iam_group" "iac_demo_admin_user_group" {
-  name = "Admin"
+# Create the IAM group
+resource "aws_iam_group" "iac_demo_user_group" {
+  name = var.group_name
 
 }
 
-# Attach the AdministratorAccess policy to the 'Admin' IAM group
-resource "aws_iam_group_policy_attachment" "iac_demo_attach_admin_policy" {
-  group = aws_iam_group.iac_demo_admin_user_group.name
-  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
+# Attach relevant policies to the IAM group
+resource "aws_iam_group_policy_attachment" "iac_demo_attach_policy" {
+  for_each = toset(var.policies)
+
+  group = aws_iam_group.iac_demo_user_group.name
+  policy_arn = each.value
 }
 
-# Create an admin IAM user
+# Create IAM user(s)
 resource "aws_iam_user" "iac_demo_iam_user" {
-  name = "np-iac-demo-admin-user"
+  name = var.user_name
 
   tags = {
     Usage       = "Access"
   }
 }
 
-# Add admin user to the AdminAccess group in AWS
-resource "aws_iam_group_membership" "iac_demo_add_admin" {
+# Add IAM users to the group
+resource "aws_iam_group_membership" "iac_demo_add_user_to_group" {
   name = "iac-demo-admin-user-group"
 
   users = [
     aws_iam_user.iac_demo_iam_user.name
   ]
 
-  group = aws_iam_group.iac_demo_admin_user_group.name
+  group = aws_iam_group.iac_demo_user_group.name
 }
 
-# Enable an access key so we can have long-lasting credentials when working as this user in Terraform
-resource "aws_iam_access_key" "iac_demo_admin_access_key" {
+# Enable an admin access key so we can have long-lasting credentials when working as this user in Terraform
+resource "aws_iam_access_key" "iac_demo_access_key" {
   user = aws_iam_user.iac_demo_iam_user.name  
 }

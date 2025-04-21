@@ -1,7 +1,7 @@
 # Create our AWS Athena database
 resource "aws_athena_database" "iac_demo_athena_db" {
   name   = "np_iac_demo_athena"
-  bucket = aws_s3_bucket.iac_demo_s3_bucket.id
+  bucket = var.athena_results_bucket
   
 }
 
@@ -13,7 +13,7 @@ resource "aws_athena_workgroup" "iac_demo_athena_workgroup" {
     enforce_workgroup_configuration = true
 
     result_configuration {
-      output_location = "s3://${aws_s3_bucket.iac_demo_s3_bucket.bucket}/output/"
+      output_location = "s3://${var.athena_results_bucket}/output/"
     }
   }
 
